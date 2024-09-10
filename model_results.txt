@@ -10,3 +10,18 @@ Classification Report:
     accuracy                           0.74       161
    macro avg       0.72      0.72      0.72       161
 weighted avg       0.74      0.74      0.74       161
+Timestamp: 2024-09-10 23:21:51
+Training accuracy: 0.7667
+Test accuracy: 0.7055
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.82      0.69      0.75       104
+           1       0.57      0.73      0.64        59
+
+    accuracy                           0.71       163
+   macro avg       0.70      0.71      0.70       163
+weighted avg       0.73      0.71      0.71       163
+
+----------------------------------------
