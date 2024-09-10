@@ -2,3 +2,4 @@
 diabetes_model.pkl
 scaler.pkl
 __pycache__
+model_backups
