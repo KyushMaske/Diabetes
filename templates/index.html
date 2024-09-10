@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background: white;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        input[type="number"], button {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .form-container {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+    </style>
+    <script>
+        async function predictDiabetes(event) {
+            event.preventDefault(); // Prevent form submission
+
+            // Gather input data from the form
+            const data = {
+                pregnancies: parseInt(document.getElementById('pregnancies').value),
+                glucose: parseFloat(document.getElementById('glucose').value),
+                blood_pressure: parseFloat(document.getElementById('blood_pressure').value),
+                skin_thickness: parseFloat(document.getElementById('skin_thickness').value),
+                insulin: parseFloat(document.getElementById('insulin').value),
+                bmi: parseFloat(document.getElementById('bmi').value),
+                diabetes_pedigree_function: parseFloat(document.getElementById('diabetes_pedigree_function').value),
+                age: parseInt(document.getElementById('age').value)
+            };
+
+            // Send POST request to the FastAPI backend
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            document.getElementById('result').innerText = `Prediction: ${result.prediction}`;
+        }
+    </script>
+</head>
+<body>
+    <h1>Diabetes Prediction</h1>
+    <div class="form-container">
+        <form onsubmit="predictDiabetes(event)">
+            <label for="pregnancies">Pregnancies:</label>
+            <input type="number" id="pregnancies" required>
+
+            <label for="glucose">Glucose:</label>
+            <input type="number" id="glucose" step="0.1" required>
+
+            <label for="blood_pressure">Blood Pressure:</label>
+            <input type="number" id="blood_pressure" step="0.1" required>
+
+            <label for="skin_thickness">Skin Thickness:</label>
+            <input type="number" id="skin_thickness" step="0.1" required>
+
+            <label for="insulin">Insulin:</label>
+            <input type="number" id="insulin" step="0.1" required>
+
+            <label for="bmi">BMI:</label>
+            <input type="number" id="bmi" step="0.1" required>
+
+            <label for="diabetes_pedigree_function">Diabetes Pedigree Function:</label>
+            <input type="number" id="diabetes_pedigree_function" step="0.001" required>
+
+            <label for="age">Age:</label>
+            <input type="number" id="age" required>
+
+            <button type="submit">Predict</button>
+        </form>
+
+        <h2 id="result"></h2>
+    </div>
+</body>
+</html>

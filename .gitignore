@@ -1,0 +1,4 @@
+.env
+diabetes_model.pkl
+scaler.pkl
+__pycache__
