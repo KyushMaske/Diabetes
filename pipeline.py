@@ -36,15 +36,15 @@ def save_results(train_accuracy, test_accuracy, class_report):
     timestamp = datetime.now().strftime(
         "%Y-%m-%d %H:%M:%S"
     )  # Format: YYYY-MM-DD HH:MM:SS
-    with open(RESULTS_FILE, "a") as f:  
-        f.write(f"Timestamp: {timestamp}\n")  
+    with open(RESULTS_FILE, "a") as f:
+        f.write(f"Timestamp: {timestamp}\n")
         f.write(
             f"Training accuracy: {train_accuracy:.4f}\n"
         )  # Format to 4 decimal places
-        f.write(f"Test accuracy: {test_accuracy:.4f}\n")  
+        f.write(f"Test accuracy: {test_accuracy:.4f}\n")
         f.write("\nClassification Report:\n")
         f.write(class_report)
-        f.write("\n" + "-" * 40 + "\n")  
+        f.write("\n" + "-" * 40 + "\n")
     print(f"Results appended to {RESULTS_FILE}")
 
 
@@ -62,9 +62,9 @@ def clear_backup_directory():
 
 def fetch_data_from_db(CSV_PATH):
     """Fetch data from PostgreSQL and save it to a CSV file."""
-    conn = None  
+    conn = None
     try:
-        
+
         conn = psycopg2.connect(DATABASE_URL)
 
         # Define the SQL query to fetch data
@@ -74,10 +74,9 @@ def fetch_data_from_db(CSV_PATH):
         FROM diabetes_predictions;
         """
 
-
         df = pd.read_sql_query(query, conn)
         print("Data fetched from database:")
-        print(df)  
+        print(df)
 
         df["prediction"] = df["prediction"].apply(lambda x: 1 if x == "Diabetic" else 0)
 
@@ -98,24 +97,19 @@ def fetch_data_from_db(CSV_PATH):
 
         print(df)
 
-       
         if not os.path.isfile(CSV_PATH):
-            df.to_csv(
-                CSV_PATH, mode="w", index=False, header=True
-            ) 
+            df.to_csv(CSV_PATH, mode="w", index=False, header=True)
         else:
-            df.to_csv(
-                CSV_PATH, mode="a", index=False, header=False
-            )  
+            df.to_csv(CSV_PATH, mode="a", index=False, header=False)
 
         print(
             f"{len(df)} records fetched from the database and appended to {CSV_PATH}."
         )
-        return df  
+        return df
 
     except Exception as e:
         print(f"An error occurred: {e}")
-        return pd.DataFrame()  
+        return pd.DataFrame()
 
     finally:
         # Close the database connection
@@ -130,7 +124,6 @@ def train_new_model(csv_path):
 
     length = len(df)
     print(f"The number of rows in the DataFrame is: {length}")
-
 
     X = df.drop(columns="Outcome")  # Drop 'Outcome' to create features
     y = df["Outcome"]  # Label column
@@ -158,27 +151,21 @@ def train_new_model(csv_path):
         shutil.move(MODEL_PATH, os.path.join(BACKUP_DIR, backup_filename))
         print(f"Old model backed up as {backup_filename}")
 
-
     model = svm.SVC(kernel="linear", class_weight="balanced")
     model.fit(X_train, y_train)
-
 
     X_train_prediction = model.predict(X_train)
     train_accuracy = accuracy_score(y_train, X_train_prediction)
     print(f"Training accuracy: {train_accuracy}")
 
-
     X_test_prediction = model.predict(X_test)
     test_accuracy = accuracy_score(y_test, X_test_prediction)
     print(f"Test accuracy: {test_accuracy}")
 
-
     class_report = classification_report(y_test, X_test_prediction)
     print(class_report)
 
-
     save_results(train_accuracy, test_accuracy, class_report)
-
 
     with open(MODEL_PATH, "wb") as model_file:
         pickle.dump(model, model_file)
@@ -189,16 +176,13 @@ def train_new_model(csv_path):
     print("New model trained and saved.")
 
 
-
 def flush_database():
     """Delete all records from the predictions table."""
     conn = None  # Initialize conn to None for safe closure
     try:
         conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
-        delete_query = (
-            "DELETE FROM diabetes_predictions;"  
-        )
+        delete_query = "DELETE FROM diabetes_predictions;"
         cursor.execute(delete_query)
         conn.commit()
         cursor.close()
@@ -215,12 +199,9 @@ def flush_database():
 def pipeline():
     print(f"Pipeline started at {datetime.now()}")
 
-
     fetch_data_from_db(CSV_PATH)
 
-
     train_new_model(CSV_PATH)
-
 
     flush_database()
 

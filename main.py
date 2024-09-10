@@ -93,7 +93,6 @@ def fetch_all_results():
         df = pd.read_sql_query(query, conn)
         conn.close()
 
-
         return df.to_dict(orient="records")
 
     except Exception as e:
@@ -109,7 +108,6 @@ async def get_results(request: Request):
         raise HTTPException(
             status_code=500, detail="Failed to fetch data from the database"
         )
-
 
     return templates.TemplateResponse(
         "results.html", {"request": request, "results": results}
@@ -145,10 +143,8 @@ async def run_pipeline_endpoint():
     global pipeline_running
     pipeline_running = True
 
-
     thread = threading.Thread(target=pipeline)
     thread.start()
-
 
     thread.join()
 

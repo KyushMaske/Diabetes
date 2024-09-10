@@ -1,5 +1,5 @@
 import pickle
-import numpy as np 
+import numpy as np
 from sqlalchemy import create_engine, Column, Integer, Float, String, MetaData, Table
 from sqlalchemy.orm import sessionmaker
 
@@ -41,7 +41,6 @@ class DiabetesModel:
     def predict(self, input_data):
 
         scaled_data = self.scaler.transform(input_data)
-
 
         prediction = self.model.predict(scaled_data)
         result = "Diabetic" if prediction[0] == 1 else "Not Diabetic"
